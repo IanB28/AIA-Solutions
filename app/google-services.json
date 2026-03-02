@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "619454040413",
+    "project_id": "aia-solutions",
+    "storage_bucket": "aia-solutions.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:619454040413:android:0e2c294cf2d4d6b6cb80b4",
+        "android_client_info": {
+          "package_name": "com.example.aia_solutions"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmNwHAXdCtOV25azq-nLs_9YBKJAfZZL8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
