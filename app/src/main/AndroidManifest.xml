@@ -18,8 +18,8 @@
             android:exported="false" />
         <activity
             android:name=".LoginActivity"
-            android:theme="@style/Theme.TuApp.Splash"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.TuApp.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
