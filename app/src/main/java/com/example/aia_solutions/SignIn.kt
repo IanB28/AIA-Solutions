@@ -29,7 +29,6 @@ class SignIn : AppCompatActivity() {
         passwordEditText = findViewById(R.id.etPassRegister)
         confirmPasswordEditText = findViewById(R.id.etPassRegisterConfirm)
         signUpButton = findViewById(R.id.btnSignUp)
-
         progressBar = findViewById(R.id.progressBarSignIn)
 
         signUpButton.setOnClickListener {
@@ -59,6 +58,7 @@ class SignIn : AppCompatActivity() {
                     progressBar.visibility = View.GONE
 
                     if (task.isSuccessful) {
+                        Toast.makeText(this, "Registro exitoso", Toast.LENGTH_SHORT).show()
                         val intent = Intent(this, MainActivity::class.java)
                         startActivity(intent)
                         finish()
@@ -70,13 +70,5 @@ class SignIn : AppCompatActivity() {
         }
     }
 
-    public override fun onStart() {
-        super.onStart()
-        val currentUser = auth.currentUser
-        if (currentUser != null) {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
-    }
+    // HEMOS ELIMINADO COMPLETAMENTE EL onStart PARA EVITAR REDIRECCIONES AUTOMÁTICAS
 }

@@ -1,4 +1,3 @@
-
 package com.example.aia_solutions
 
 import android.content.Intent
@@ -22,17 +21,22 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var progressBar: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // ACTIVAR EL SPLASH ES OBLIGATORIO si usas el tema Theme.TuApp.Splash en el Manifest
         val splashScreen = installSplashScreen()
         
         super.onCreate(savedInstanceState)
 
         auth = FirebaseAuth.getInstance()
+        
+        // Bloque de auto-login comentado para forzar que se vea la pantalla de login
+        /*
         if (auth.currentUser != null) {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             finish()
-            return // Detener la ejecución para no cargar el login
+            return
         }
+        */
 
         setContentView(R.layout.activity_login)
 
