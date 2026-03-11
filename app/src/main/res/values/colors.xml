@@ -3,4 +3,12 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="rojito">#ED3515</color>
+    
+    <!-- Professional Palette -->
+    <color name="primary">#6366F1</color>
+    <color name="primary_variant">#4F46E5</color>
+    <color name="primary_light">#EEF2FF</color>
+    <color name="text_heading">#0F172A</color>
+    <color name="text_body">#64748B</color>
+    <color name="bg_main">#F8FAFC</color>
 </resources>
