@@ -9,6 +9,7 @@ import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.google.firebase.auth.FirebaseAuth
 
 class LoginActivity : AppCompatActivity() {
@@ -17,22 +18,33 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var emailEditText: EditText
     private lateinit var passwordEditText: EditText
     private lateinit var loginButton: Button
+    private lateinit var signInButton: Button
     private lateinit var progressBar: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen()
+        
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
 
         auth = FirebaseAuth.getInstance()
+        if (auth.currentUser != null) {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+            return // Detener la ejecución para no cargar el login
+        }
+
+        setContentView(R.layout.activity_login)
 
         emailEditText = findViewById(R.id.email)
         passwordEditText = findViewById(R.id.password)
         loginButton = findViewById(R.id.loginButton)
+        signInButton = findViewById(R.id.signInButton)
         progressBar = findViewById(R.id.progressBar)
 
         loginButton.setOnClickListener {
-            val email = emailEditText.text.toString()
-            val password = passwordEditText.text.toString()
+            val email = emailEditText.text.toString().trim()
+            val password = passwordEditText.text.toString().trim()
 
             if (email.isNotEmpty() && password.isNotEmpty()) {
                 progressBar.visibility = View.VISIBLE
@@ -44,23 +56,18 @@ class LoginActivity : AppCompatActivity() {
                             startActivity(intent)
                             finish()
                         } else {
-                            Toast.makeText(baseContext, "Authentication failed.",
+                            Toast.makeText(baseContext, "Error: ${task.exception?.message}",
                                 Toast.LENGTH_SHORT).show()
                         }
                     }
             } else {
-                Toast.makeText(this, "Please fill in all fields.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Por favor, completa todos los campos.", Toast.LENGTH_SHORT).show()
             }
         }
-    }
 
-    public override fun onStart() {
-        super.onStart()
-        val currentUser = auth.currentUser
-        if (currentUser != null) {
-            val intent = Intent(this, MainActivity::class.java)
+        signInButton.setOnClickListener {
+            val intent = Intent(this, SignIn::class.java)
             startActivity(intent)
-            finish()
         }
     }
 }

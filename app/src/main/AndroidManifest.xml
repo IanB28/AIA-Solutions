@@ -14,7 +14,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AIASolutions">
         <activity
+            android:name=".SignIn"
+            android:exported="false" />
+        <activity
             android:name=".LoginActivity"
+            android:theme="@style/Theme.TuApp.Splash"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,7 +28,7 @@
         </activity>
         <activity
             android:name=".MainActivity"
-            android:exported="false"/>
+            android:exported="false" />
     </application>
 
 </manifest>
