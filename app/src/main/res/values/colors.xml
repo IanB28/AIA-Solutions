@@ -11,4 +11,6 @@
     <color name="text_heading">#0F172A</color>
     <color name="text_body">#64748B</color>
     <color name="bg_main">#F8FAFC</color>
+    <color name="green_text">#3B6D11</color>
+    <color name="red_text">#A32D2D</color>
 </resources>
