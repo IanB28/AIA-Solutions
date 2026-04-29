@@ -5,55 +5,190 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/gradient_background"
     tools:context=".SignIn">
+
+    <View
+        android:id="@+id/glassDecoration1"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:layout_marginTop="-40dp"
+        android:layout_marginStart="-30dp"
+        android:background="@drawable/circle_accent"
+        android:alpha="0.25"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/formCard" />
+
+    <View
+        android:id="@+id/glassDecoration2"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        android:layout_marginEnd="-20dp"
+        android:background="@drawable/circle_accent"
+        android:alpha="0.15"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/formCard"
+        app:layout_constraintTop_toBottomOf="@id/formCard" />
+
     <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:id="@+id/headerContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="20dp"
-        android:gravity="center">
+        android:layout_marginTop="60dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Crear Cuenta"
-            android:textSize="24sp"
-            android:layout_marginBottom="20dp"/>
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:fontFamily="sans-serif-medium" />
 
-        <EditText
-            android:id="@+id/etEmailRegister"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Correo electrónico"
-            android:inputType="textEmailAddress" />
-
-        <EditText
-            android:id="@+id/etPassRegister"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Contraseña (mínimo 8 caracteres)"
-            android:inputType="textPassword" />
-
-        <EditText
-            android:id="@+id/etPassRegisterConfirm"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Por favor repite tu contraseña"
-            android:inputType="textPassword" />
-
-        <Button
-            android:id="@+id/btnSignUp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Registrarse"
-            android:backgroundTint="#2196F3"
-            android:layout_marginTop="20dp" />
-
-        <ProgressBar
-            android:id="@+id/progressBarSignIn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone" />
+            android:text="Únete a nosotros para comenzar"
+            android:textSize="16sp"
+            android:textColor="#E3F2FD"
+            android:layout_marginTop="8dp"
+            android:fontFamily="sans-serif" />
     </LinearLayout>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/formCard"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginTop="32dp"
+        app:cardCornerRadius="28dp"
+        app:cardElevation="0dp"
+        app:cardBackgroundColor="#26FFFFFF"
+        app:strokeColor="#4DFFFFFF"
+        app:strokeWidth="1.2dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/headerContainer">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="28dp">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/emailRegisterLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:textColorHint="#CCFFFFFF"
+                app:hintTextColor="#FFFFFF"
+                app:boxBackgroundMode="none">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etEmailRegister"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/glass_input_background"
+                    android:hint="Correo electrónico"
+                    android:inputType="textEmailAddress"
+                    android:padding="16dp"
+                    android:textColor="#FFFFFF" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/passwordRegisterLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:textColorHint="#CCFFFFFF"
+                app:hintTextColor="#FFFFFF"
+                app:passwordToggleEnabled="true"
+                app:passwordToggleTint="#FFFFFF"
+                app:boxBackgroundMode="none">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etPassRegister"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/glass_input_background"
+                    android:hint="Contraseña (+8 caracteres)"
+                    android:inputType="textPassword"
+                    android:padding="16dp"
+                    android:textColor="#FFFFFF" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/passwordConfirmLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColorHint="#CCFFFFFF"
+                app:hintTextColor="#FFFFFF"
+                app:passwordToggleEnabled="true"
+                app:passwordToggleTint="#FFFFFF"
+                app:boxBackgroundMode="none">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etPassRegisterConfirm"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/glass_input_background"
+                    android:hint="Repite tu contraseña"
+                    android:inputType="textPassword"
+                    android:padding="16dp"
+                    android:textColor="#FFFFFF" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSignUp"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginTop="32dp"
+        android:text="REGISTRARSE"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:cornerRadius="20dp"
+        app:backgroundTint="#FFFFFF"
+        android:textColor="#1E88E5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/formCard" />
+
+    <ProgressBar
+        android:id="@+id/progressBarSignIn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:indeterminateTint="#FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvBackToLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="¿Ya tienes cuenta? Inicia sesión"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:layout_marginTop="24dp"
+        android:paddingBottom="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnSignUp" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
