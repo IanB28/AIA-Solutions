@@ -84,6 +84,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="20dp"
                         android:text="Buscar Negocios"
+                        android:id="@+id/btnBuscarNegocios"
                         android:textAllCaps="false"
                         android:textColor="@color/white"
                         app:backgroundTint="@color/primary"
@@ -210,6 +211,10 @@
                             android:textColor="@color/primary"
                             android:textSize="16sp"
                             android:textStyle="bold" />
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/recyclerBusinesses"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"/>
 
                         <TextView
                             android:layout_width="wrap_content"
