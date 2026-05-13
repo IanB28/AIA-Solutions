@@ -53,16 +53,16 @@
                         android:textColor="#FFFFFF"/>
                 </LinearLayout>
 
-                <TextView
-                    android:id="@+id/txtEstadoNegocio"
+                <Switch
+                    android:id="@+id/switchEstado"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Abierto"
-                    android:textSize="12sp"
                     android:textColor="#B4B2A9"
-                    android:background="@drawable/bg_status_dark"
-                    android:paddingHorizontal="12dp"
-                    android:paddingVertical="6dp"/>
+                    android:textSize="12sp"
+                    android:checked="true"
+                    android:thumbTint="#97C459"
+                    android:trackTint="#2C2C2A"/>
 
             </LinearLayout>
 
