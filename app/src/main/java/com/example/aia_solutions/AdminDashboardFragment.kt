@@ -82,5 +82,13 @@ class AdminDashboardFragment : Fragment(R.layout.fragment_admin_dashboard) {
         btnSiguiente.setOnClickListener {
             // lógica para pasar al siguiente turno
         }
+
+
+        view.findViewById<View>(R.id.cardMiNegocio).setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.contenedorFragmentos, MiNegocioFragment())
+                .addToBackStack(null)
+                .commit()
+        }
     }
 }
