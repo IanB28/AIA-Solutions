@@ -11,8 +11,8 @@ class FirestoreService {
     private val db = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
 
-    // 🔥 Crear turno con número automático (SIN DUPLICADOS)
-    fun tomarTurno(queueId: String, onResult: (Long?) -> Unit) {
+    // 🔥 Crear turno con número automático usando subcolecciones internas
+    fun tomarTurno(businessId: String, onResult: (Long?) -> Unit) {
         val user = auth.currentUser
 
         if (user == null) {
@@ -21,59 +21,49 @@ class FirestoreService {
             return
         }
 
-        val queueRef = db.collection("queues").document(queueId)
+        val businessRef = db.collection("businesses").document(businessId)
+        // Usamos el UID del usuario como ID del documento para validar por ID directo en la transacción
+        val turnRef = businessRef.collection("turns").document(user.uid)
 
         db.runTransaction { transaction ->
+            val businessSnapshot = transaction.get(businessRef)
+            val turnSnapshot = transaction.get(turnRef)
 
-            val queueSnapshot = transaction.get(queueRef)
-
-            // Obtener turno actual
-            val currentTurn = queueSnapshot.getLong("currentTurn") ?: 0
-
-            // Verificar si el usuario ya tiene turno activo
-            val existingTurns = queueRef.collection("turns")
-                .whereEqualTo("userId", user.uid)
-                .whereEqualTo("status", "waiting")
-
-            val existingSnapshot = existingTurns.get().result
-
-            if (existingSnapshot != null && !existingSnapshot.isEmpty) {
-                // Ya tiene turno
-                val existingNumber = existingSnapshot.documents[0].getLong("number")
-                return@runTransaction existingNumber
+            // 1. Verificar si el usuario ya tiene un turno activo en este negocio
+            if (turnSnapshot.exists() && turnSnapshot.getString("status") == "waiting") {
+                return@runTransaction turnSnapshot.getLong("number")
             }
 
+            // 2. Obtener el turno actual desde el documento del negocio
+            val currentTurn = businessSnapshot.getLong("currentTurn") ?: 0
             val nextTurn = currentTurn + 1
 
-            // Actualizar contador
-            transaction.update(queueRef, "currentTurn", nextTurn)
+            // 3. Actualizar el contador en el negocio
+            transaction.update(businessRef, "currentTurn", nextTurn)
 
-            // Crear turno
+            // 4. Crear el turno en la subcolección
             val turno = hashMapOf(
                 "number" to nextTurn,
                 "userId" to user.uid,
                 "status" to "waiting",
                 "createdAt" to FieldValue.serverTimestamp()
             )
-
-            val turnRef = queueRef.collection("turns").document()
             transaction.set(turnRef, turno)
 
             nextTurn
-
         }.addOnSuccessListener { turnNumber ->
-            Log.d("Firestore", "Turno asignado: $turnNumber")
-            onResult(turnNumber)
+            Log.d("Firestore", "Turno asignado con éxito: $turnNumber")
+            onResult(turnNumber as Long?)
         }.addOnFailureListener { e ->
-            Log.e("Firestore", "Error al tomar turno", e)
+            Log.e("Firestore", "Error al tomar turno en la transacción", e)
             onResult(null)
         }
     }
 
-    // 🔍 Obtener turnos en espera (ordenados)
-    fun escucharTurnos(queueId: String, onUpdate: (List<Map<String, Any>>) -> Unit) {
-        db.collection("queues")
-            .document(queueId)
+    // 🔍 Obtener turnos en espera (ordenados por número)
+    fun escucharTurnos(businessId: String, onUpdate: (List<Map<String, Any>>) -> Unit) {
+        db.collection("businesses")
+            .document(businessId)
             .collection("turns")
             .whereEqualTo("status", "waiting")
             .orderBy("number")
@@ -88,24 +78,18 @@ class FirestoreService {
             }
     }
 
-    // 👤 Obtener turno del usuario actual
-    fun obtenerMiTurno(queueId: String, onResult: (Long?) -> Unit) {
-        val user = auth.currentUser
+    // 👤 Obtener turno del usuario actual de manera directa
+    fun obtenerMiTurno(businessId: String, onResult: (Long?) -> Unit) {
+        val user = auth.currentUser ?: return onResult(null)
 
-        if (user == null) {
-            onResult(null)
-            return
-        }
-
-        db.collection("queues")
-            .document(queueId)
+        db.collection("businesses")
+            .document(businessId)
             .collection("turns")
-            .whereEqualTo("userId", user.uid)
-            .whereEqualTo("status", "waiting")
+            .document(user.uid)
             .get()
-            .addOnSuccessListener { snapshot ->
-                if (!snapshot.isEmpty) {
-                    val number = snapshot.documents[0].getLong("number")
+            .addOnSuccessListener { document ->
+                if (document.exists() && document.getString("status") == "waiting") {
+                    val number = document.getLong("number")
                     onResult(number)
                 } else {
                     onResult(null)
@@ -116,11 +100,11 @@ class FirestoreService {
             }
     }
 
-    // ▶️ Avanzar turno (para admin)
-    fun siguienteTurno(queueId: String) {
-        val queueRef = db.collection("queues").document(queueId)
-
-        queueRef.collection("turns")
+    // ▶️ Avanzar turno (Lógica para la sección de Administración)
+    fun siguienteTurno(businessId: String) {
+        db.collection("businesses")
+            .document(businessId)
+            .collection("turns")
             .whereEqualTo("status", "waiting")
             .orderBy("number")
             .limit(1)
@@ -133,12 +117,11 @@ class FirestoreService {
             }
     }
 
-    // 🔥 Escuchar negocios en tiempo real
+    // 🔥 Escuchar negocios activos en tiempo real
     fun escucharNegocios(onResult: (List<Business>) -> Unit) {
         db.collection("businesses")
             .whereEqualTo("isActive", true)
             .addSnapshotListener { snapshot, e ->
-
                 if (e != null) {
                     Log.e("Firestore", "Error al obtener negocios", e)
                     return@addSnapshotListener
@@ -152,6 +135,4 @@ class FirestoreService {
                 onResult(lista)
             }
     }
-
-
 }

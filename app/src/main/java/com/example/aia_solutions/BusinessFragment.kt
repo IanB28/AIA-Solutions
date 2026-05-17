@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import data.firebase.adapter.BusinessAdapter
 import data.firebase.firebase.FirestoreService
 import data.firebase.model.Business
+import com.example.aia_solutions.TurnoDetailFragment
 
 class BusinessFragment : Fragment(R.layout.fragment_business) {
 
@@ -34,9 +35,20 @@ class BusinessFragment : Fragment(R.layout.fragment_business) {
         chipGroup = view.findViewById(R.id.chipGroup)
 
         adapter = BusinessAdapter(emptyList()) { business ->
-            println("Click en: ${business.name}")
-        }
+            // 1. Creamos el fragmento de detalle y le pasamos el ID del negocio
+            val detailFragment = TurnoDetailFragment().apply {
+                arguments = Bundle().apply {
+                    putString("businessId", business.id)
+                    putString("businessName", business.name)
+                }
+            }
 
+            // 2. Realizamos la transacción manual usando el contenedor de tu MainActivity
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.contenedorFragmentos, detailFragment)
+                .addToBackStack(null) // Esto permite que el botón "Atrás" del celular regrese a la lista
+                .commit()
+        }
         recycler.layoutManager = LinearLayoutManager(requireContext())
         recycler.adapter = adapter
 
