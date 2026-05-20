@@ -159,6 +159,14 @@
                         android:text="Recuérdame"
                         android:textColor="#FFFFFF" />
 
+                    <CheckBox
+                        android:id="@+id/adminLogin"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:buttonTint="#FFFFFF"
+                        android:text="Ingresar como Admin"
+                        android:textColor="#FFFFFF" />
+
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
