@@ -9,3 +9,4 @@ data class Turno(
     val status: String = "waiting",
     val createdAt: Timestamp? = null
 )
+

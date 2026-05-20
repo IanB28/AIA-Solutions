@@ -23,16 +23,16 @@ class MainActivity : AppCompatActivity() {
                 bottomNavigation.visibility = android.view.View.GONE
                 cargarFragment(AdminDashboardFragment())
             } else {
-                cargarFragment(BusinessFragment())
+                cargarFragment(InicioFragment())
             }
         }
 
         bottomNavigation.setOnItemSelectedListener { item ->
             val fragment: Fragment = when (item.itemId) {
-                R.id.nav_inicio        -> BusinessFragment()
+                R.id.nav_inicio        -> InicioFragment()
                 R.id.nav_perfil        -> PerfilFragment()
                 R.id.nav_configuracion -> ConfigFragment()
-                else                   -> BusinessFragment()
+                else                   -> InicioFragment()
             }
             cargarFragment(fragment)
             true

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <!-- Handle -->
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/bg_handle"/>
+
+    <!-- Info cliente -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="24dp">
+
+        <TextView
+            android:id="@+id/txtBottomIniciales"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:gravity="center"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#444441"
+            android:background="@drawable/bg_avatar"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="14dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txtBottomNombre"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:textColor="#1C1C1C"/>
+
+            <TextView
+                android:id="@+id/txtBottomNumero"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:textSize="13sp"
+                android:textColor="#888780"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Botón atendido -->
+    <TextView
+        android:id="@+id/btnAtendido"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="✓  Marcar como atendido"
+        android:textSize="14sp"
+        android:textColor="#FFFFFF"
+        android:gravity="center"
+        android:background="@drawable/bg_button_dark"
+        android:paddingVertical="14dp"
+        android:layout_marginBottom="10dp"/>
+
+    <!-- Botón cancelar turno -->
+    <TextView
+        android:id="@+id/btnCancelarTurno"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="✕  Cancelar turno"
+        android:textSize="14sp"
+        android:textColor="#C0392B"
+        android:gravity="center"
+        android:background="@drawable/bg_danger"
+        android:paddingVertical="14dp"
+        android:layout_marginBottom="8dp"/>
+
+    <!-- Botón cerrar -->
+    <TextView
+        android:id="@+id/btnCerrarSheet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cerrar"
+        android:textSize="13sp"
+        android:textColor="#888780"
+        android:gravity="center"
+        android:paddingVertical="10dp"/>
+
+</LinearLayout>
