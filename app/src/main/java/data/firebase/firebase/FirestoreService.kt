@@ -11,7 +11,7 @@ class FirestoreService {
     private val db = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
 
-    // 🔥 Crear turno con número automático usando subcolecciones internas
+    // 1. Crear turno de forma segura sin transacciones para evitar crasheos en el emulador
     fun tomarTurno(businessId: String, onResult: (Long?) -> Unit) {
         val user = auth.currentUser
 
@@ -22,45 +22,68 @@ class FirestoreService {
         }
 
         val businessRef = db.collection("businesses").document(businessId)
-        // Usamos el UID del usuario como ID del documento para validar por ID directo en la transacción
         val turnRef = businessRef.collection("turns").document(user.uid)
 
-        db.runTransaction { transaction ->
-            val businessSnapshot = transaction.get(businessRef)
-            val turnSnapshot = transaction.get(turnRef)
-
-            // 1. Verificar si el usuario ya tiene un turno activo en este negocio
+        turnRef.get().addOnSuccessListener { turnSnapshot ->
             if (turnSnapshot.exists() && turnSnapshot.getString("status") == "waiting") {
-                return@runTransaction turnSnapshot.getLong("number")
+                val numeroExistente = turnSnapshot.getLong("number")
+                onResult(numeroExistente)
+                return@addOnSuccessListener
             }
 
-            // 2. Obtener el turno actual desde el documento del negocio
-            val currentTurn = businessSnapshot.getLong("currentTurn") ?: 0
-            val nextTurn = currentTurn + 1
+            businessRef.get().addOnSuccessListener { businessSnapshot ->
+                val currentTurn = businessSnapshot.getLong("currentTurn") ?: 0L
+                val nextTurn = currentTurn + 1L
 
-            // 3. Actualizar el contador en el negocio
-            transaction.update(businessRef, "currentTurn", nextTurn)
+                businessRef.update("currentTurn", nextTurn).addOnSuccessListener {
+                    val turno = hashMapOf(
+                        "number" to nextTurn,
+                        "userId" to user.uid,
+                        "status" to "waiting",
+                        "createdAt" to FieldValue.serverTimestamp()
+                    )
 
-            // 4. Crear el turno en la subcolección
-            val turno = hashMapOf(
-                "number" to nextTurn,
-                "userId" to user.uid,
-                "status" to "waiting",
-                "createdAt" to FieldValue.serverTimestamp()
-            )
-            transaction.set(turnRef, turno)
-
-            nextTurn
-        }.addOnSuccessListener { turnNumber ->
-            Log.d("Firestore", "Turno asignado con éxito: $turnNumber")
-            onResult(turnNumber as Long?)
+                    turnRef.set(turno).addOnSuccessListener {
+                        Log.d("Firestore", "Turno asignado: $nextTurn")
+                        onResult(nextTurn)
+                    }.addOnFailureListener { e ->
+                        Log.e("Firestore", "Error al crear turno", e)
+                        onResult(null)
+                    }
+                }.addOnFailureListener { e ->
+                    Log.e("Firestore", "Error al actualizar contador", e)
+                    onResult(null)
+                }
+            }.addOnFailureListener { e ->
+                Log.e("Firestore", "Error al leer negocio", e)
+                onResult(null)
+            }
         }.addOnFailureListener { e ->
-            Log.e("Firestore", "Error al tomar turno en la transacción", e)
+            Log.e("Firestore", "Error al verificar turno", e)
             onResult(null)
         }
     }
 
-    // 🔍 Obtener turnos en espera (ordenados por número)
+    // 2. Cancelar el turno activo cambiando su estado
+    fun cancelarTurno(businessId: String, onResult: (Boolean) -> Unit) {
+        val user = auth.currentUser ?: return onResult(false)
+
+        db.collection("businesses")
+            .document(businessId)
+            .collection("turns")
+            .document(user.uid)
+            .update("status", "cancelled")
+            .addOnSuccessListener {
+                Log.d("Firestore", "Turno cancelado exitosamente")
+                onResult(true)
+            }
+            .addOnFailureListener { e ->
+                Log.e("Firestore", "Error al cancelar turno", e)
+                onResult(false)
+            }
+    }
+
+    // 3. Escuchar la fila general de personas esperando (Contador gigante)
     fun escucharTurnos(businessId: String, onUpdate: (List<Map<String, Any>>) -> Unit) {
         db.collection("businesses")
             .document(businessId)
@@ -78,29 +101,33 @@ class FirestoreService {
             }
     }
 
-    // 👤 Obtener turno del usuario actual de manera directa
-    fun obtenerMiTurno(businessId: String, onResult: (Long?) -> Unit) {
+    // 🔥 NUEVO: Escuchar MI turno en tiempo real (Sustituye al obtenerMiTurno viejo)
+    fun escucharMiTurno(businessId: String, onResult: (Long?) -> Unit) {
         val user = auth.currentUser ?: return onResult(null)
 
         db.collection("businesses")
             .document(businessId)
             .collection("turns")
             .document(user.uid)
-            .get()
-            .addOnSuccessListener { document ->
-                if (document.exists() && document.getString("status") == "waiting") {
+            .addSnapshotListener { document, e ->
+                if (e != null) {
+                    Log.e("Firestore", "Error escuchando mi turno", e)
+                    onResult(null)
+                    return@addSnapshotListener
+                }
+
+                // Solo devolvemos el número si el documento existe Y está en estado "waiting"
+                if (document != null && document.exists() && document.getString("status") == "waiting") {
                     val number = document.getLong("number")
                     onResult(number)
                 } else {
+                    // Si no existe, o fue cancelado/terminado, devolvemos null
                     onResult(null)
                 }
             }
-            .addOnFailureListener {
-                onResult(null)
-            }
     }
 
-    // ▶️ Avanzar turno (Lógica para la sección de Administración)
+    // 5. Avanzar turno (Lógica de administración, intacta)
     fun siguienteTurno(businessId: String) {
         db.collection("businesses")
             .document(businessId)
@@ -117,7 +144,7 @@ class FirestoreService {
             }
     }
 
-    // 🔥 Escuchar negocios activos en tiempo real
+    // 6. Escuchar los negocios activos (Intacta)
     fun escucharNegocios(onResult: (List<Business>) -> Unit) {
         db.collection("businesses")
             .whereEqualTo("isActive", true)

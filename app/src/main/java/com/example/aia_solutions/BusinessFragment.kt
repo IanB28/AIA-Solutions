@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView
 import data.firebase.adapter.BusinessAdapter
 import data.firebase.firebase.FirestoreService
 import data.firebase.model.Business
-import com.example.aia_solutions.TurnoDetailFragment
 
 class BusinessFragment : Fragment(R.layout.fragment_business) {
 
@@ -35,7 +34,6 @@ class BusinessFragment : Fragment(R.layout.fragment_business) {
         chipGroup = view.findViewById(R.id.chipGroup)
 
         adapter = BusinessAdapter(emptyList()) { business ->
-            // 1. Creamos el fragmento de detalle y le pasamos el ID del negocio
             val detailFragment = TurnoDetailFragment().apply {
                 arguments = Bundle().apply {
                     putString("businessId", business.id)
@@ -43,12 +41,13 @@ class BusinessFragment : Fragment(R.layout.fragment_business) {
                 }
             }
 
-            // 2. Realizamos la transacción manual usando el contenedor de tu MainActivity
+            // Transición limpia hacia el detalle del negocio
             parentFragmentManager.beginTransaction()
                 .replace(R.id.contenedorFragmentos, detailFragment)
-                .addToBackStack(null) // Esto permite que el botón "Atrás" del celular regrese a la lista
+                .addToBackStack(null)
                 .commit()
         }
+
         recycler.layoutManager = LinearLayoutManager(requireContext())
         recycler.adapter = adapter
 
@@ -73,7 +72,6 @@ class BusinessFragment : Fragment(R.layout.fragment_business) {
     }
 
     private fun setupChips(lista: List<Business>) {
-        // Solo construye los chips una vez
         if (chipGroup.childCount > 0) return
 
         val categorias = listOf("Todos") + lista.map { it.category }.distinct()
@@ -110,7 +108,6 @@ class BusinessFragment : Fragment(R.layout.fragment_business) {
     }
 
     private fun actualizarChips() {
-        val categorias = listOf("Todos") + listaCompleta.map { it.category }.distinct()
         for (i in 0 until chipGroup.childCount) {
             val chip = chipGroup.getChildAt(i) as TextView
             val esSeleccionado = chip.text == categoriaSeleccionada
