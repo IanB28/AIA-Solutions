@@ -34,7 +34,18 @@ class BusinessFragment : Fragment(R.layout.fragment_business) {
         chipGroup = view.findViewById(R.id.chipGroup)
 
         adapter = BusinessAdapter(emptyList()) { business ->
-            println("Click en: ${business.name}")
+            val detailFragment = TurnoDetailFragment().apply {
+                arguments = Bundle().apply {
+                    putString("businessId", business.id)
+                    putString("businessName", business.name)
+                }
+            }
+
+            // Transición limpia hacia el detalle del negocio
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.contenedorFragmentos, detailFragment)
+                .addToBackStack(null)
+                .commit()
         }
 
         recycler.layoutManager = LinearLayoutManager(requireContext())
@@ -61,7 +72,6 @@ class BusinessFragment : Fragment(R.layout.fragment_business) {
     }
 
     private fun setupChips(lista: List<Business>) {
-        // Solo construye los chips una vez
         if (chipGroup.childCount > 0) return
 
         val categorias = listOf("Todos") + lista.map { it.category }.distinct()
@@ -98,7 +108,6 @@ class BusinessFragment : Fragment(R.layout.fragment_business) {
     }
 
     private fun actualizarChips() {
-        val categorias = listOf("Todos") + listaCompleta.map { it.category }.distinct()
         for (i in 0 until chipGroup.childCount) {
             val chip = chipGroup.getChildAt(i) as TextView
             val esSeleccionado = chip.text == categoriaSeleccionada
