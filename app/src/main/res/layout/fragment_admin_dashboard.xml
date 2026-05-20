@@ -1,375 +1,410 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AdminDashboardFragment">
+    android:background="#F7F7F6"
+    android:fitsSystemWindows="true">
 
-    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#F7F7F6"
-        android:fitsSystemWindows="true">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
 
+        <!-- Header negocio -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_dark_card"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="18dp"
+            android:layout_marginBottom="10dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="MI NEGOCIO"
+                    android:textSize="11sp"
+                    android:textColor="#888780"
+                    android:letterSpacing="0.06"
+                    android:textAllCaps="true"/>
+
+                <TextView
+                    android:id="@+id/txtNombreNegocio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Cargando..."
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"/>
+            </LinearLayout>
+
+            <Switch
+                android:id="@+id/switchEstado"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Abierto"
+                android:textColor="#B4B2A9"
+                android:textSize="12sp"
+                android:checked="true"
+                android:thumbTint="#97C459"
+                android:trackTint="#2C2C2A"/>
+
+        </LinearLayout>
+
+        <!-- Métricas -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="10dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:background="@drawable/bg_white_card"
+                android:padding="14dp"
+                android:layout_marginEnd="4dp">
+
+                <TextView
+                    android:id="@+id/txtEnEspera"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textSize="26sp"
+                    android:textStyle="bold"
+                    android:textColor="#1C1C1C"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="En espera"
+                    android:textSize="11sp"
+                    android:textColor="#888780"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:background="@drawable/bg_white_card"
+                android:padding="14dp"
+                android:layout_marginHorizontal="4dp">
+
+                <TextView
+                    android:id="@+id/txtAtendidos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textSize="26sp"
+                    android:textStyle="bold"
+                    android:textColor="#1C1C1C"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Atendidos"
+                    android:textSize="11sp"
+                    android:textColor="#888780"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:background="@drawable/bg_white_card"
+                android:padding="14dp"
+                android:layout_marginStart="4dp">
+
+                <TextView
+                    android:id="@+id/txtTiempoMedio"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="--"
+                    android:textSize="26sp"
+                    android:textStyle="bold"
+                    android:textColor="#1C1C1C"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Tiempo medio"
+                    android:textSize="11sp"
+                    android:textColor="#888780"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Turno actual -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:background="@drawable/bg_white_card"
+            android:padding="16dp"
+            android:layout_marginBottom="10dp">
 
-            <!-- Header negocio -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_dark_card"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:padding="18dp"
-                android:layout_marginBottom="10dp">
+                android:layout_marginBottom="14dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Turno actual"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textColor="#1C1C1C"/>
+
+                <TextView
+                    android:id="@+id/txtNumeroTurnoActual"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="--"
+                    android:textSize="11sp"
+                    android:textColor="#888780"
+                    android:background="@drawable/bg_chip_category"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="3dp"/>
+            </LinearLayout>
+
+            <!-- Con turno activo -->
+            <LinearLayout
+                android:id="@+id/layoutTurnoActivo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/txtInicialesTurnoActual"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="#444441"
+                    android:gravity="center"
+                    android:background="@drawable/bg_avatar"/>
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:layout_marginHorizontal="12dp"
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/txtNombreTurnoActual"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Mi negocio"
-                        android:textSize="11sp"
-                        android:textColor="#888780"
-                        android:letterSpacing="0.06"
-                        android:textAllCaps="true"/>
-
-                    <TextView
-                        android:id="@+id/txtNombreNegocio"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="Elotes Don Pepe"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
-                        android:textColor="#FFFFFF"/>
-                </LinearLayout>
-
-                <Switch
-                    android:id="@+id/switchEstado"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Abierto"
-                    android:textColor="#B4B2A9"
-                    android:textSize="12sp"
-                    android:checked="true"
-                    android:thumbTint="#97C459"
-                    android:trackTint="#2C2C2A"/>
-
-            </LinearLayout>
-
-            <!-- Métricas -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="10dp">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:background="@drawable/bg_white_card"
-                    android:padding="14dp"
-                    android:layout_marginEnd="4dp">
-
-                    <TextView
-                        android:id="@+id/txtEnEspera"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="5"
-                        android:textSize="26sp"
-                        android:textStyle="bold"
-                        android:textColor="#1C1C1C"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="En espera"
-                        android:textSize="11sp"
-                        android:textColor="#888780"/>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:background="@drawable/bg_white_card"
-                    android:padding="14dp"
-                    android:layout_marginHorizontal="4dp">
-
-                    <TextView
-                        android:id="@+id/txtAtendidos"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="12"
-                        android:textSize="26sp"
-                        android:textStyle="bold"
-                        android:textColor="#1C1C1C"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="Atendidos"
-                        android:textSize="11sp"
-                        android:textColor="#888780"/>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:background="@drawable/bg_white_card"
-                    android:padding="14dp"
-                    android:layout_marginStart="4dp">
-
-                    <TextView
-                        android:id="@+id/txtTiempoMedio"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="~8m"
-                        android:textSize="26sp"
-                        android:textStyle="bold"
-                        android:textColor="#1C1C1C"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="Tiempo medio"
-                        android:textSize="11sp"
-                        android:textColor="#888780"/>
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <!-- Turno actual -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@drawable/bg_white_card"
-                android:padding="16dp"
-                android:layout_marginBottom="10dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="14dp">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Turno actual"
-                        android:textSize="13sp"
-                        android:textStyle="bold"
-                        android:textColor="#1C1C1C"/>
-
-                    <TextView
-                        android:id="@+id/txtNumeroTurnoActual"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="#13"
-                        android:textSize="11sp"
-                        android:textColor="#888780"
-                        android:background="@drawable/bg_chip_category"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="3dp"/>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-
-                    <TextView
-                        android:id="@+id/txtInicialesTurnoActual"
-                        android:layout_width="42dp"
-                        android:layout_height="42dp"
-                        android:text="JR"
                         android:textSize="14sp"
                         android:textStyle="bold"
-                        android:textColor="#444441"
-                        android:gravity="center"
-                        android:background="@drawable/bg_avatar"/>
+                        android:textColor="#1C1C1C"/>
 
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginHorizontal="12dp"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/txtNombreTurnoActual"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Juan Ramírez"
-                            android:textSize="14sp"
-                            android:textStyle="bold"
-                            android:textColor="#1C1C1C"/>
-
-                        <TextView
-                            android:id="@+id/txtTiempoTurnoActual"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:text="En atención · 4 min"
-                            android:textSize="12sp"
-                            android:textColor="#888780"/>
-                    </LinearLayout>
-
-                    <Button
-                        android:id="@+id/btnSiguiente"
+                    <TextView
+                        android:id="@+id/txtTiempoTurnoActual"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Siguiente"
+                        android:layout_marginTop="2dp"
                         android:textSize="12sp"
-                        android:textColor="#FFFFFF"
-                        android:background="@drawable/bg_button_dark"
-                        android:paddingHorizontal="16dp"
-                        android:paddingVertical="9dp"/>
+                        android:textColor="#888780"/>
                 </LinearLayout>
 
+                <Button
+                    android:id="@+id/btnSiguiente"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Siguiente"
+                    android:textSize="12sp"
+                    android:textColor="#FFFFFF"
+                    android:background="@drawable/bg_button_dark"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="9dp"/>
             </LinearLayout>
 
-            <!-- Cola de espera -->
+            <!-- Sin turno activo -->
             <LinearLayout
+                android:id="@+id/layoutSinTurno"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/bg_white_card"
-                android:padding="16dp"
-                android:layout_marginBottom="10dp">
+                android:gravity="center"
+                android:paddingVertical="8dp"
+                android:visibility="visible">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="12dp">
+                    android:text="Sin turno activo"
+                    android:textSize="13sp"
+                    android:textColor="#888780"/>
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Cola de espera"
-                        android:textSize="13sp"
-                        android:textStyle="bold"
-                        android:textColor="#1C1C1C"/>
-
-                    <TextView
-                        android:id="@+id/txtTotalEspera"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="5 turnos"
-                        android:textSize="12sp"
-                        android:textColor="#888780"/>
-                </LinearLayout>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerTurnos"
-                    android:layout_width="match_parent"
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:nestedScrollingEnabled="false"/>
-
-            </LinearLayout>
-
-            <!-- Accesos rápidos -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <LinearLayout
-                    android:id="@+id/cardMiNegocio"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:background="@drawable/bg_white_card"
-                    android:padding="16dp"
-                    android:layout_marginEnd="4dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="⚙"
-                        android:textSize="18sp"
-                        android:textColor="#888780"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Mi negocio"
-                        android:textSize="13sp"
-                        android:textStyle="bold"
-                        android:textColor="#1C1C1C"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="Editar info y horarios"
-                        android:textSize="11sp"
-                        android:textColor="#B4B2A9"/>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/cardEstadisticas"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:background="@drawable/bg_white_card"
-                    android:padding="16dp"
-                    android:layout_marginStart="4dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="📊"
-                        android:textSize="18sp"
-                        android:textColor="#888780"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Estadísticas"
-                        android:textSize="13sp"
-                        android:textStyle="bold"
-                        android:textColor="#1C1C1C"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="Turnos e historial"
-                        android:textSize="11sp"
-                        android:textColor="#B4B2A9"/>
-                </LinearLayout>
+                    android:layout_marginTop="2dp"
+                    android:text="Cuando llegue un cliente aparecerá aquí"
+                    android:textSize="11sp"
+                    android:textColor="#C8C7C1"/>
 
             </LinearLayout>
 
         </LinearLayout>
-    </ScrollView>
-</FrameLayout>
+
+        <!-- Cola de espera -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_white_card"
+            android:padding="16dp"
+            android:layout_marginBottom="10dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="12dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Cola de espera"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textColor="#1C1C1C"/>
+
+                <TextView
+                    android:id="@+id/txtTotalEspera"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0 turnos"
+                    android:textSize="12sp"
+                    android:textColor="#888780"/>
+            </LinearLayout>
+
+            <!-- Estado vacío cola -->
+            <TextView
+                android:id="@+id/txtSinEspera"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="No hay clientes en espera"
+                android:textSize="12sp"
+                android:textColor="#C8C7C1"
+                android:gravity="center"
+                android:paddingVertical="12dp"
+                android:visibility="visible"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerTurnos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:visibility="gone"/>
+
+        </LinearLayout>
+
+        <!-- Accesos rápidos -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/cardMiNegocio"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:background="@drawable/bg_white_card_clickable"
+                android:padding="16dp"
+                android:layout_marginEnd="4dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="⚙"
+                    android:textSize="18sp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Mi negocio"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textColor="#1C1C1C"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="Editar info y horarios"
+                    android:textSize="11sp"
+                    android:textColor="#B4B2A9"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/cardEstadisticas"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:background="@drawable/bg_white_card_clickable"
+                android:padding="16dp"
+                android:layout_marginStart="4dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="📊"
+                    android:textSize="18sp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Estadísticas"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textColor="#1C1C1C"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="Turnos e historial"
+                    android:textSize="11sp"
+                    android:textColor="#B4B2A9"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>
