@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F5F7FA"
+    android:padding="24dp">
+
+    <TextView
+        android:id="@+id/txtBusinessName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Nombre del Negocio"
+        android:textAlignment="center"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:textColor="#1D1D1D"
+        android:layout_marginTop="16dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Información de la fila"
+        android:textAlignment="center"
+        android:textSize="14sp"
+        android:textColor="#757575"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="32dp" />
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="8dp"
+        app:cardBackgroundColor="@android:color/white"
+        android:layout_marginHorizontal="8dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:paddingTop="32dp"
+            android:paddingBottom="32dp"
+            android:paddingHorizontal="24dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Personas esperando"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#9E9E9E"
+                android:textAllCaps="true" />
+
+            <TextView
+                android:id="@+id/txtWaitCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textSize="80sp"
+                android:textStyle="bold"
+                android:textColor="#2196F3"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                tools:text="14" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#E0E0E0"
+                android:layout_marginVertical="16dp" />
+
+            <TextView
+                android:id="@+id/txtMyTurnStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Aún no solicitas turno aquí"
+                android:textAlignment="center"
+                android:textSize="16sp"
+                android:textColor="#424242" />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <Button
+        android:id="@+id/btnTakeTurn"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:text="SOLICITAR MI TURNO"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:backgroundTint="#2196F3"
+        app:cornerRadius="16dp"
+        android:layout_marginBottom="8dp" />
+
+    <Button
+        android:id="@+id/btnCancelTurn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cancelar mi turno"
+        android:textSize="14sp"
+        android:textColor="#E53935"
+        android:background="@android:color/transparent"
+        android:visibility="gone"
+        android:layout_marginBottom="16dp" />
+
+</LinearLayout>
