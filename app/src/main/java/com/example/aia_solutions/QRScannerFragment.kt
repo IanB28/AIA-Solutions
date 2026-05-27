@@ -66,6 +66,8 @@ class QRScannerFragment : Fragment(R.layout.fragment_qr_scanner) {
 
     private fun startCamera() {
         val previewView = view?.findViewById<PreviewView>(R.id.previewView) ?: return
+        val executor = cameraExecutor ?: return
+        val scannerClient = scanner ?: return
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
         cameraProviderFuture.addListener({
             val cameraProvider = cameraProviderFuture.get()
@@ -78,9 +80,6 @@ class QRScannerFragment : Fragment(R.layout.fragment_qr_scanner) {
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build()
                 .also { analysis ->
-                    val executor = cameraExecutor ?: return
-                    val scannerClient = scanner ?: return
-
                     analysis.setAnalyzer(executor) { imageProxy ->
                         val mediaImage = imageProxy.image
                         if (mediaImage == null || hasScanned) {
@@ -122,7 +121,7 @@ class QRScannerFragment : Fragment(R.layout.fragment_qr_scanner) {
                 if (!isAdded) return@runOnUiThread
                 if (business == null) {
                     hasScanned = false
-                    Toast.makeText(requireContext(), "QR inválido: negocio no encontrado", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Negocio no encontrado", Toast.LENGTH_SHORT).show()
                     return@runOnUiThread
                 }
 
