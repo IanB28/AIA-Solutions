@@ -19,7 +19,6 @@ import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.BarcodeScanner
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
-import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 class QRScannerFragment : Fragment(R.layout.fragment_qr_scanner) {
@@ -28,8 +27,8 @@ class QRScannerFragment : Fragment(R.layout.fragment_qr_scanner) {
     private val scannerOptions = BarcodeScannerOptions.Builder()
         .setBarcodeFormats(Barcode.FORMAT_QR_CODE)
         .build()
-    private var scanner: BarcodeScanner? = null
-    private var cameraExecutor: ExecutorService? = null
+    private val scanner: BarcodeScanner by lazy { BarcodeScanning.getClient(scannerOptions) }
+    private val cameraExecutor by lazy { Executors.newSingleThreadExecutor() }
     private var hasScanned = false
     private var cameraProvider: ProcessCameraProvider? = null
 
@@ -45,11 +44,6 @@ class QRScannerFragment : Fragment(R.layout.fragment_qr_scanner) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (cameraExecutor == null || cameraExecutor?.isShutdown == true) {
-            cameraExecutor = Executors.newSingleThreadExecutor()
-        }
-        scanner = scanner ?: BarcodeScanning.getClient(scannerOptions)
-
         if (hasCameraPermission()) {
             startCamera()
         } else {
@@ -66,8 +60,6 @@ class QRScannerFragment : Fragment(R.layout.fragment_qr_scanner) {
 
     private fun startCamera() {
         val previewView = view?.findViewById<PreviewView>(R.id.previewView) ?: return
-        val executor = cameraExecutor ?: return
-        val scannerClient = scanner ?: return
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
         cameraProviderFuture.addListener({
             val cameraProvider = cameraProviderFuture.get()
@@ -80,7 +72,7 @@ class QRScannerFragment : Fragment(R.layout.fragment_qr_scanner) {
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build()
                 .also { analysis ->
-                    analysis.setAnalyzer(executor) { imageProxy ->
+                    analysis.setAnalyzer(cameraExecutor) { imageProxy ->
                         val mediaImage = imageProxy.image
                         if (mediaImage == null || hasScanned) {
                             imageProxy.close()
@@ -89,7 +81,7 @@ class QRScannerFragment : Fragment(R.layout.fragment_qr_scanner) {
 
                         val image =
                             InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
-                        scannerClient.process(image)
+                        scanner.process(image)
                             .addOnSuccessListener { barcodes ->
                                 processBarcodes(barcodes)
                             }
@@ -117,26 +109,24 @@ class QRScannerFragment : Fragment(R.layout.fragment_qr_scanner) {
 
         hasScanned = true
         firestoreService.obtenerNegocioPorId(businessId) { business ->
-            activity?.runOnUiThread {
-                if (!isAdded) return@runOnUiThread
-                if (business == null) {
-                    hasScanned = false
-                    Toast.makeText(requireContext(), "Negocio no encontrado", Toast.LENGTH_SHORT).show()
-                    return@runOnUiThread
-                }
-
-                Toast.makeText(requireContext(), "Negocio detectado: ${business.name}", Toast.LENGTH_SHORT).show()
-                val detailFragment = TurnoDetailFragment().apply {
-                    arguments = Bundle().apply {
-                        putString("businessId", business.id)
-                        putString("businessName", business.name)
-                    }
-                }
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.contenedorFragmentos, detailFragment)
-                    .addToBackStack(null)
-                    .commit()
+            if (!isAdded || view == null) return@obtenerNegocioPorId
+            if (business == null) {
+                hasScanned = false
+                Toast.makeText(requireContext(), "Negocio no encontrado", Toast.LENGTH_SHORT).show()
+                return@obtenerNegocioPorId
             }
+
+            Toast.makeText(requireContext(), "Negocio detectado: ${business.name}", Toast.LENGTH_SHORT).show()
+            val detailFragment = TurnoDetailFragment().apply {
+                arguments = Bundle().apply {
+                    putString("businessId", business.id)
+                    putString("businessName", business.name)
+                }
+            }
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.contenedorFragmentos, detailFragment)
+                .addToBackStack(null)
+                .commit()
         }
     }
 
@@ -144,10 +134,12 @@ class QRScannerFragment : Fragment(R.layout.fragment_qr_scanner) {
         super.onDestroyView()
         cameraProvider?.unbindAll()
         cameraProvider = null
-        scanner?.close()
-        scanner = null
-        cameraExecutor?.shutdown()
-        cameraExecutor = null
+    }
+
+    override fun onDestroy() {
+        scanner.close()
+        cameraExecutor.shutdown()
+        super.onDestroy()
     }
 }
 
