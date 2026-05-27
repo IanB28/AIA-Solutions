@@ -162,6 +162,42 @@
 
         </LinearLayout>
 
+        <!-- Código QR -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_white_card"
+            android:padding="16dp"
+            android:layout_marginBottom="10dp"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="CÓDIGO QR"
+                android:textSize="10sp"
+                android:textColor="#888780"
+                android:letterSpacing="0.06"
+                android:layout_marginBottom="12dp"/>
+
+            <ImageView
+                android:id="@+id/ivQRCode"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_marginBottom="8dp"
+                android:contentDescription="Código QR del negocio"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Escanea para unirte a la fila"
+                android:textSize="12sp"
+                android:textColor="#888780"
+                android:layout_marginBottom="8dp"/>
+
+        </LinearLayout>
+
         <!-- Zona de peligro -->
         <LinearLayout
             android:layout_width="match_parent"

@@ -14,14 +14,24 @@ class TurnoDetailFragment : Fragment(R.layout.fragment_turno_detail) {
 
     private val service = FirestoreService()
 
+    // Variables visuales
+    private lateinit var txtWaitCount: TextView
+    private lateinit var txtMyTurnStatus: TextView
+    private lateinit var btnTakeTurn: Button
+    private lateinit var btnCancelTurn: Button
+
+    // Variables de estado para cruzar los datos
+    private var listaTurnosActuales: List<Long> = emptyList()
+    private var miTurnoActual: Long? = null
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val txtBusinessName = view.findViewById<TextView>(R.id.txtBusinessName)
-        val txtWaitCount = view.findViewById<TextView>(R.id.txtWaitCount)
-        val txtMyTurnStatus = view.findViewById<TextView>(R.id.txtMyTurnStatus)
-        val btnTakeTurn = view.findViewById<Button>(R.id.btnTakeTurn)
-        val btnCancelTurn = view.findViewById<Button>(R.id.btnCancelTurn)
+        txtWaitCount = view.findViewById(R.id.txtWaitCount)
+        txtMyTurnStatus = view.findViewById(R.id.txtMyTurnStatus)
+        btnTakeTurn = view.findViewById(R.id.btnTakeTurn)
+        btnCancelTurn = view.findViewById(R.id.btnCancelTurn)
 
         val businessName = arguments?.getString("businessName")
         val businessId = arguments?.getString("businessId")
@@ -32,17 +42,20 @@ class TurnoDetailFragment : Fragment(R.layout.fragment_turno_detail) {
 
         if (businessId != null) {
 
-            // 1. Escuchar la fila general en tiempo real
+            // 1. Escuchar la fila general y extraer solo los números
             service.escucharTurnos(businessId) { lista ->
                 activity?.runOnUiThread {
-                    txtWaitCount.text = lista.size.toString()
+                    // Mapeamos los documentos para tener una lista pura de números [15, 16, 17...]
+                    listaTurnosActuales = lista.mapNotNull { (it["number"] as? Number)?.toLong() }
+                    actualizarPantallaInteligente()
                 }
             }
 
-            // 2. 🔥 Aquí está la corrección: Usamos la función NUEVA (escucharMiTurno)
+            // 2. Escuchar mi turno en tiempo real
             service.escucharMiTurno(businessId) { miNumero ->
                 activity?.runOnUiThread {
-                    actualizarEstadoBoton(miNumero, txtMyTurnStatus, btnTakeTurn, btnCancelTurn)
+                    miTurnoActual = miNumero
+                    actualizarPantallaInteligente()
                 }
             }
         }
@@ -88,29 +101,52 @@ class TurnoDetailFragment : Fragment(R.layout.fragment_turno_detail) {
         }
     }
 
-    // Control preciso de los estados visuales del Ticket Digital
-    private fun actualizarEstadoBoton(miNumero: Long?, txtMyTurnStatus: TextView, btnTakeTurn: Button, btnCancelTurn: Button) {
-        if (miNumero != null && miNumero > 0) {
-            // ESTADO: Con turno activo (Verde y bloqueado)
-            txtMyTurnStatus.text = "Tu turno actual es el: #$miNumero"
-            txtMyTurnStatus.setTextColor(Color.parseColor("#4CAF50"))
+    // función que cruza los datos y decide qué mostrar
+    private fun actualizarPantallaInteligente() {
+        // Siempre mostramos cuántos hay en total esperando
+        txtWaitCount.text = listaTurnosActuales.size.toString()
 
-            btnTakeTurn.text = "YA TIENES UN TURNO"
-            btnTakeTurn.isEnabled = false
-            btnTakeTurn.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#BDBDBD"))
+        if (miTurnoActual != null && miTurnoActual!! > 0) {
 
-            btnCancelTurn.visibility = View.VISIBLE
-            btnCancelTurn.isEnabled = true
-            btnCancelTurn.text = "Cancelar mi turno"
+            // Revisamos quién es el primero en la fila general
+            val elPrimeroDeLaFila = listaTurnosActuales.firstOrNull()
+
+            if (elPrimeroDeLaFila == miTurnoActual) {
+                // ¡YA ES TU TURNO! Eres el #1 de la lista
+                txtMyTurnStatus.text = "¡ES TU TURNO! Pasa al mostrador."
+                txtMyTurnStatus.setTextColor(Color.parseColor("#FF9800")) // Color Naranja llamativo
+
+                btnTakeTurn.text = "ES TU TURNO"
+                btnTakeTurn.isEnabled = false
+                btnTakeTurn.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#BDBDBD"))
+                btnCancelTurn.visibility = View.VISIBLE
+                btnCancelTurn.isEnabled = true
+                btnCancelTurn.text = "Cancelar mi turno"
+
+            } else {
+                // AÚN NO ES TU TURNO: Calculamos cuántos hay antes de ti
+                val posicionEnFila = listaTurnosActuales.indexOf(miTurnoActual)
+                val personasAdelante = if (posicionEnFila > 0) posicionEnFila else 0
+
+                txtMyTurnStatus.text = "Tu turno: #$miTurnoActual\nFaltan $personasAdelante personas antes de ti"
+                txtMyTurnStatus.setTextColor(Color.parseColor("#4CAF50")) // Verde
+
+                btnTakeTurn.text = "YA TIENES UN TURNO"
+                btnTakeTurn.isEnabled = false
+                btnTakeTurn.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#BDBDBD"))
+                btnCancelTurn.visibility = View.VISIBLE
+                btnCancelTurn.isEnabled = true
+                btnCancelTurn.text = "Cancelar mi turno"
+            }
+
         } else {
-            // ESTADO: Sin turno / Cancelado (Azul y libre)
+            // ESTADO NORMAL: Sin turno
             txtMyTurnStatus.text = "Aún no solicitas turno aquí"
-            txtMyTurnStatus.setTextColor(Color.parseColor("#424242"))
+            txtMyTurnStatus.setTextColor(Color.parseColor("#424242")) // Gris oscuro
 
             btnTakeTurn.text = "SOLICITAR MI TURNO"
             btnTakeTurn.isEnabled = true
-            btnTakeTurn.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#2196F3"))
-
+            btnTakeTurn.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#2196F3")) // Azul
             btnCancelTurn.visibility = View.GONE
         }
     }

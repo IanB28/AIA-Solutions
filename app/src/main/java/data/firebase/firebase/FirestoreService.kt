@@ -162,4 +162,22 @@ class FirestoreService {
                 onResult(lista)
             }
     }
+
+    fun obtenerNegocioPorId(businessId: String, onResult: (Business?) -> Unit) {
+        db.collection("businesses")
+            .document(businessId)
+            .get()
+            .addOnSuccessListener { doc ->
+                val business = if (doc.exists()) {
+                    doc.toObject(Business::class.java)?.copy(id = doc.id)
+                } else {
+                    null
+                }
+                onResult(business)
+            }
+            .addOnFailureListener { e ->
+                Log.e("Firestore", "Error al obtener negocio por ID", e)
+                onResult(null)
+            }
+    }
 }

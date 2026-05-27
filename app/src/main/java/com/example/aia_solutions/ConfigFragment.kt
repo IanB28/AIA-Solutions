@@ -6,7 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import com.google.android.material.switchmaterial.SwitchMaterial
@@ -14,52 +14,48 @@ import com.google.firebase.auth.FirebaseAuth
 
 class ConfigFragment : Fragment() {
 
+    private lateinit var auth: FirebaseAuth
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflamos la vista que definimos anteriormente
         return inflater.inflate(R.layout.fragment_config, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Referencias a los elementos del XML
+        auth = FirebaseAuth.getInstance()
+
+        // Perfil Section
+        val tvProfileEmail = view.findViewById<TextView>(R.id.tvProfileEmail)
+        val currentUser = auth.currentUser
+        tvProfileEmail.text = currentUser?.email ?: "Usuario"
+
+        // Settings Section
         val switchNotifications = view.findViewById<SwitchMaterial>(R.id.switchNotifications)
         val switchDarkMode = view.findViewById<SwitchMaterial>(R.id.switchDarkMode)
-        val tvLanguage = view.findViewById<TextView>(R.id.tvLanguage)
-        val tvPrivacy = view.findViewById<TextView>(R.id.tvPrivacy)
-        val btnLogout = view.findViewById<Button>(R.id.btnLogout)
+        val llLanguage = view.findViewById<LinearLayout>(R.id.llLanguage)
+        val btnLogout = view.findViewById<LinearLayout>(R.id.btnLogout)
 
-        // Manejo de Notificaciones
         switchNotifications.setOnCheckedChangeListener { _, isChecked ->
             val status = if (isChecked) "activadas" else "desactivadas"
             Toast.makeText(requireContext(), "Notificaciones $status", Toast.LENGTH_SHORT).show()
         }
 
-        // Manejo de Modo Oscuro
         switchDarkMode.setOnCheckedChangeListener { _, isChecked ->
-            val status = if (isChecked) "activado" else "desactivado"
+            val status = if (isChecked) "activado" else "desactivated"
             Toast.makeText(requireContext(), "Modo oscuro $status", Toast.LENGTH_SHORT).show()
         }
 
-        // Click en Idioma
-        tvLanguage.setOnClickListener {
+        llLanguage.setOnClickListener {
             Toast.makeText(requireContext(), "Configuración de idioma", Toast.LENGTH_SHORT).show()
         }
 
-        // Click en Privacidad
-        tvPrivacy.setOnClickListener {
-            Toast.makeText(requireContext(), "Ajustes de privacidad", Toast.LENGTH_SHORT).show()
-        }
-
-        // Cerrar Sesión con Firebase
         btnLogout.setOnClickListener {
-            FirebaseAuth.getInstance().signOut()
-            
-            // Redirigir al Login y limpiar la pila de actividades
+            auth.signOut()
             val intent = Intent(requireContext(), LoginActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
