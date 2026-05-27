@@ -137,8 +137,8 @@ class QRScannerFragment : Fragment(R.layout.fragment_qr_scanner) {
     }
 
     override fun onDestroy() {
-        scanner.close()
         cameraExecutor.shutdown()
+        scanner.close()
         super.onDestroy()
     }
 }
@@ -166,5 +166,5 @@ internal fun extractBusinessId(rawValue: String): String? {
         return null
     }
 
-    return value
+    return value.takeIf { it.matches(Regex("^[A-Za-z0-9_-]{3,100}$")) }
 }

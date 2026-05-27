@@ -42,4 +42,9 @@ class QRScannerParserTest {
     fun `extractBusinessId keeps direct id value`() {
         assertEquals("business789", extractBusinessId("business789"))
     }
+
+    @Test
+    fun `extractBusinessId rejects invalid direct values`() {
+        assertNull(extractBusinessId("invalid id with spaces"))
+    }
 }
