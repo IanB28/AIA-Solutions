@@ -6,8 +6,11 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.OptIn
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageAnalysis
+import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
@@ -19,6 +22,7 @@ import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.BarcodeScanner
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
+import com.google.common.util.concurrent.ListenableFuture
 import java.util.concurrent.Executors
 
 class QRScannerFragment : Fragment(R.layout.fragment_qr_scanner) {
@@ -60,56 +64,78 @@ class QRScannerFragment : Fragment(R.layout.fragment_qr_scanner) {
 
     private fun startCamera() {
         val previewView = view?.findViewById<PreviewView>(R.id.previewView) ?: return
-        val cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
+        
+        // Intentamos obtener la instancia del proveedor de la cámara
+        val cameraProviderFuture: ListenableFuture<ProcessCameraProvider> = 
+            ProcessCameraProvider.getInstance(requireContext())
+
         cameraProviderFuture.addListener({
-            val cameraProvider = cameraProviderFuture.get()
-            this.cameraProvider = cameraProvider
-            val preview = Preview.Builder().build().also {
-                it.surfaceProvider = previewView.surfaceProvider
-            }
+            try {
+                // Obtenemos el proveedor (usamos casting explícito por seguridad)
+                val provider = cameraProviderFuture.get() as ProcessCameraProvider
+                this.cameraProvider = provider
 
-            val imageAnalysis = ImageAnalysis.Builder()
-                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                .build()
-                .also { analysis ->
-                    analysis.setAnalyzer(cameraExecutor) { imageProxy ->
-                        val mediaImage = imageProxy.image
-                        if (mediaImage == null || hasScanned) {
-                            imageProxy.close()
-                            return@setAnalyzer
-                        }
-
-                        val image =
-                            InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
-                        scanner.process(image)
-                            .addOnSuccessListener { barcodes ->
-                                processBarcodes(barcodes)
-                            }
-                            .addOnCompleteListener {
-                                imageProxy.close()
-                            }
-                    }
+                val preview = Preview.Builder().build().also {
+                    it.setSurfaceProvider(previewView.surfaceProvider)
                 }
 
-            cameraProvider.unbindAll()
-            cameraProvider.bindToLifecycle(
-                viewLifecycleOwner,
-                CameraSelector.DEFAULT_BACK_CAMERA,
-                preview,
-                imageAnalysis
-            )
+                val imageAnalysis = ImageAnalysis.Builder()
+                    .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                    .build()
+                    .also { analysis ->
+                        analysis.setAnalyzer(cameraExecutor) { imageProxy ->
+                            processImageProxy(imageProxy)
+                        }
+                    }
+
+                provider.unbindAll()
+                provider.bindToLifecycle(
+                    viewLifecycleOwner,
+                    CameraSelector.DEFAULT_BACK_CAMERA,
+                    preview,
+                    imageAnalysis
+                )
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "Error de cámara: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
         }, ContextCompat.getMainExecutor(requireContext()))
+    }
+
+    @OptIn(ExperimentalGetImage::class)
+    private fun processImageProxy(imageProxy: ImageProxy) {
+        val mediaImage = imageProxy.image
+        if (mediaImage == null || hasScanned) {
+            imageProxy.close()
+            return
+        }
+
+        val image = InputImage.fromMediaImage(
+            mediaImage, 
+            imageProxy.imageInfo.rotationDegrees
+        )
+        
+        scanner.process(image)
+            .addOnSuccessListener { barcodes ->
+                if (barcodes.isNotEmpty()) {
+                    processBarcodes(barcodes)
+                }
+            }
+            .addOnCompleteListener {
+                imageProxy.close()
+            }
     }
 
     private fun processBarcodes(barcodes: List<Barcode>) {
         if (hasScanned) return
         val rawValue = barcodes.firstOrNull()?.rawValue ?: return
         val businessId = extractBusinessId(rawValue)
+
         if (businessId.isNullOrBlank()) return
 
         hasScanned = true
         firestoreService.obtenerNegocioPorId(businessId) { business ->
             if (!isAdded || view == null) return@obtenerNegocioPorId
+            
             if (business == null) {
                 hasScanned = false
                 Toast.makeText(requireContext(), "Negocio no encontrado", Toast.LENGTH_SHORT).show()
@@ -117,12 +143,14 @@ class QRScannerFragment : Fragment(R.layout.fragment_qr_scanner) {
             }
 
             Toast.makeText(requireContext(), "Negocio detectado: ${business.name}", Toast.LENGTH_SHORT).show()
+            
             val detailFragment = TurnoDetailFragment().apply {
                 arguments = Bundle().apply {
                     putString("businessId", business.id)
                     putString("businessName", business.name)
                 }
             }
+            
             parentFragmentManager.beginTransaction()
                 .replace(R.id.contenedorFragmentos, detailFragment)
                 .addToBackStack(null)
@@ -143,28 +171,35 @@ class QRScannerFragment : Fragment(R.layout.fragment_qr_scanner) {
     }
 }
 
+/**
+ * Extrae el ID del negocio de diferentes formatos de QR sin causar conflictos de tipos
+ */
 internal fun extractBusinessId(rawValue: String): String? {
     val value = rawValue.trim()
     if (value.isEmpty()) return null
 
+    // 1. Esquema personalizado
     if (value.startsWith("aia://business/")) {
-        return value.removePrefix("aia://business/").ifBlank { null }
+        return value.removePrefix("aia://business/").substringBefore("/").ifBlank { null }
     }
 
-    val businessIdParam = Regex("""[?&]businessId=([^&#]+)""").find(value)?.groupValues?.getOrNull(1)
-    if (!businessIdParam.isNullOrBlank()) return businessIdParam
+    // 2. Parámetros de URL (usamos nombres de variables distintos para evitar shadowing)
+    val businessMatch = Regex("""[?&]businessId=([^&#]+)""").find(value)
+    if (businessMatch != null) return businessMatch.groupValues.getOrNull(1)
 
-    val idParam = Regex("""[?&]id=([^&#]+)""").find(value)?.groupValues?.getOrNull(1)
-    if (!idParam.isNullOrBlank()) return idParam
+    val idMatch = Regex("""[?&]id=([^&#]+)""").find(value)
+    if (idMatch != null) return idMatch.groupValues.getOrNull(1)
 
-    if (value.startsWith("http://") || value.startsWith("https://")) {
+    // 3. Ruta de URL estándar
+    if (value.startsWith("http")) {
         val path = value.substringBefore('?').substringBefore('#')
         if ("/business/" in path) {
-            val businessId = path.substringAfter("/business/").substringBefore('/')
-            if (businessId.isNotBlank()) return businessId
+            val idFromPath = path.substringAfter("/business/").substringBefore('/')
+            if (idFromPath.isNotBlank()) return idFromPath
         }
-        return null
     }
 
-    return value.takeIf { it.matches(Regex("^[A-Za-z0-9_-]{3,100}$")) }
+    // 4. ID Directo
+    val directIdRegex = Regex("^[A-Za-z0-9_-]{3,100}$")
+    return if (directIdRegex.matches(value)) value else null
 }

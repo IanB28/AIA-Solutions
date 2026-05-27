@@ -23,14 +23,14 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="60dp"
-                android:paddingBottom="30dp">
+                android:paddingTop="64dp"
+                android:paddingBottom="32dp">
 
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/profileCard"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    app:cardCornerRadius="50dp"
+                    android:layout_width="110dp"
+                    android:layout_height="110dp"
+                    app:cardCornerRadius="55dp"
                     app:cardElevation="0dp"
                     app:strokeWidth="4dp"
                     app:strokeColor="@color/white"
@@ -43,7 +43,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="#F1F5F9"
-                        android:padding="20dp"
+                        android:padding="24dp"
                         android:src="@drawable/ic_people"
                         app:tint="@color/primary" />
                 </com.google.android.material.card.MaterialCardView>
@@ -66,9 +66,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="Configura tu experiencia"
+                    android:text="Administrador de Cuenta"
                     android:textColor="@color/text_body"
-                    android:textSize="12sp"
+                    android:textSize="13sp"
                     android:alpha="0.7"
                     app:layout_constraintTop_toBottomOf="@id/tvProfileEmail"
                     app:layout_constraintStart_toStartOf="parent"
@@ -76,13 +76,14 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!-- Preference Group -->
+            <!-- Main Content Area -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingHorizontal="24dp">
 
+                <!-- Preference Group Title -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -94,6 +95,7 @@
                     android:layout_marginStart="12dp"
                     android:layout_marginBottom="12dp"/>
 
+                <!-- Settings Card Group 1 -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -118,8 +120,8 @@
                             android:padding="12dp">
                             
                             <FrameLayout
-                                android:layout_width="36dp"
-                                android:layout_height="36dp">
+                                android:layout_width="38dp"
+                                android:layout_height="38dp">
                                 <View
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
@@ -155,7 +157,7 @@
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
-                            android:layout_marginStart="64dp"
+                            android:layout_marginStart="66dp"
                             android:layout_marginEnd="16dp"
                             android:background="#F8FAFC" />
 
@@ -168,8 +170,8 @@
                             android:padding="12dp">
                             
                             <FrameLayout
-                                android:layout_width="36dp"
-                                android:layout_height="36dp">
+                                android:layout_width="38dp"
+                                android:layout_height="38dp">
                                 <View
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
@@ -202,11 +204,11 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Support Group -->
+                <!-- Support Group Title -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="SOPORTE"
+                    android:text="SOPORTE Y CUENTA"
                     android:textColor="@color/text_body"
                     android:textSize="11sp"
                     android:textStyle="bold"
@@ -215,6 +217,7 @@
                     android:layout_marginTop="32dp"
                     android:layout_marginBottom="12dp"/>
 
+                <!-- Settings Card Group 2 -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -243,8 +246,8 @@
                             android:focusable="true">
                             
                             <FrameLayout
-                                android:layout_width="36dp"
-                                android:layout_height="36dp">
+                                android:layout_width="38dp"
+                                android:layout_height="38dp">
                                 <View
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
@@ -278,7 +281,7 @@
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
-                            android:layout_marginStart="64dp"
+                            android:layout_marginStart="66dp"
                             android:background="#F8FAFC" />
 
                         <!-- Item: Logout -->
@@ -294,8 +297,8 @@
                             android:focusable="true">
                             
                             <FrameLayout
-                                android:layout_width="36dp"
-                                android:layout_height="36dp">
+                                android:layout_width="38dp"
+                                android:layout_height="38dp">
                                 <View
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
@@ -324,12 +327,12 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Footer Version Info -->
+                <!-- Footer Label -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="48dp"
+                    android:layout_marginTop="56dp"
                     android:text="AIA Solutions — v1.0.0"
                     android:textColor="#94A3B8"
                     android:textSize="11sp"

@@ -7,6 +7,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import data.qr.QRGenerator
 
 class MiNegocioFragment : Fragment(R.layout.fragment_mi_negocio) {
 
@@ -25,6 +26,7 @@ class MiNegocioFragment : Fragment(R.layout.fragment_mi_negocio) {
         val etDescripcion      = view.findViewById<EditText>(R.id.etDescripcion)
         val spinnerCategoria   = view.findViewById<Spinner>(R.id.spinnerCategoria)
         val btnEliminarNegocio = view.findViewById<TextView>(R.id.btnEliminarNegocio)
+        val ivQRCode           = view.findViewById<ImageView>(R.id.ivQRCode)
 
         // Setup spinner
         val spinnerAdapter = ArrayAdapter(
@@ -51,6 +53,9 @@ class MiNegocioFragment : Fragment(R.layout.fragment_mi_negocio) {
                 val categoria = doc.getString("category") ?: ""
                 val index = categorias.indexOf(categoria)
                 if (index >= 0) spinnerCategoria.setSelection(index)
+
+                // Generar y mostrar QR
+                businessId?.let { generarQR(it, ivQRCode) }
             }
 
         // Guardar cambios
@@ -110,6 +115,15 @@ class MiNegocioFragment : Fragment(R.layout.fragment_mi_negocio) {
         // Regresar
         btnBack.setOnClickListener {
             parentFragmentManager.popBackStack()
+        }
+    }
+
+    private fun generarQR(businessId: String, imageView: ImageView) {
+        val qrBitmap = QRGenerator.generateQRCode(businessId, 500, 500)
+        if (qrBitmap != null) {
+            imageView.setImageBitmap(qrBitmap)
+        } else {
+            Toast.makeText(requireContext(), "Error al generar QR", Toast.LENGTH_SHORT).show()
         }
     }
 }

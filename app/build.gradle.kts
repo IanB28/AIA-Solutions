@@ -6,9 +6,8 @@ plugins {
 
 android {
     namespace = "com.example.aia_solutions"
-    compileSdk {
-        version = release(36)
-    }
+    // Mantenemos 36 para cumplir con los requisitos de las librerías de AndroidX actuales
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.aia_solutions"
@@ -38,6 +37,14 @@ android {
     }
 }
 
+// SOLUCIÓN AL CONFLICTO DE CLASES DUPLICADAS
+configurations.all {
+    resolutionStrategy {
+        // Obligamos a usar la versión vacía de listenablefuture para que no choque con la que trae Guava.
+        force("com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava")
+    }
+}
+
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -58,8 +65,15 @@ dependencies {
     implementation("com.google.firebase:firebase-auth-ktx")
 
     implementation("androidx.core:core-splashscreen:1.0.1")
-    implementation("androidx.camera:camera-camera2:1.4.2")
-    implementation("androidx.camera:camera-lifecycle:1.4.2")
-    implementation("androidx.camera:camera-view:1.4.2")
+    implementation("androidx.camera:camera-camera2:1.4.0")
+    implementation("androidx.camera:camera-lifecycle:1.4.0")
+    implementation("androidx.camera:camera-view:1.4.0")
     implementation("com.google.mlkit:barcode-scanning:17.3.0")
+    
+    // Nueva dependencia para generar QR
+    implementation("com.google.zxing:core:3.5.3")
+
+    // Guava Fix
+    implementation(libs.guava)
+    implementation("com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava")
 }
