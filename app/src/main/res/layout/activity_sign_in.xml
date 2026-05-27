@@ -103,6 +103,25 @@
                     android:padding="28dp">
 
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/nameCompleteLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColorHint="#CCFFFFFF"
+                        app:boxBackgroundMode="none"
+                        app:hintTextColor="#FFFFFF">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/nameComplete"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/glass_input_background"
+                            android:hint="Nombre"
+                            android:inputType="text"
+                            android:padding="16dp"
+                            android:textColor="#FFFFFF" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/emailRegisterLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -118,6 +137,26 @@
                             android:background="@drawable/glass_input_background"
                             android:hint="Correo electrónico"
                             android:inputType="textEmailAddress"
+                            android:padding="16dp"
+                            android:textColor="#FFFFFF" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/phoneNumberRegisterLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:textColorHint="#CCFFFFFF"
+                        app:boxBackgroundMode="none"
+                        app:hintTextColor="#FFFFFF">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/phoneNumberRegister"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/glass_input_background"
+                            android:hint="Numero Telefónico"
+                            android:inputType="phone"
                             android:padding="16dp"
                             android:textColor="#FFFFFF" />
                     </com.google.android.material.textfield.TextInputLayout>

@@ -47,6 +47,8 @@ class AdminInicioFragment : Fragment(R.layout.fragment_admin_inicio) {
         val layoutSinTurno          = view.findViewById<LinearLayout>(R.id.layoutSinTurno)
         val txtTiempoMedio          = view.findViewById<TextView>(R.id.txtTiempoMedio)
 
+        val cardEstadisticas = view.findViewById<LinearLayout>(R.id.cardEstadisticas)
+
         turnoAdapter = TurnoAdapter(emptyList())
         recyclerTurnos.layoutManager = LinearLayoutManager(requireContext())
         recyclerTurnos.adapter = turnoAdapter
@@ -62,6 +64,14 @@ class AdminInicioFragment : Fragment(R.layout.fragment_admin_inicio) {
             val bid = businessId ?: return@setOnClickListener
             val tid = turnoActualId ?: return@setOnClickListener
             mostrarBottomSheet(turnoActualNumero, turnoActualNombre, tid, bid)
+        }
+
+        cardEstadisticas.setOnClickListener {
+            val fragment = EstadisticasFragment()
+            val transaction = requireActivity().supportFragmentManager.beginTransaction()
+            transaction.replace(R.id.contenedorAdmin, fragment)
+            transaction.addToBackStack(null)
+            transaction.commit()
         }
 
         val uid = auth.currentUser?.uid ?: return
@@ -130,7 +140,7 @@ class AdminInicioFragment : Fragment(R.layout.fragment_admin_inicio) {
                 txtEnEspera.text    = enEspera.size.toString()
                 txtAtendidos.text   = atendidos.size.toString()
                 txtTotalEspera.text = "${enEspera.size} turnos"
-                txtTiempoMedio.text = "${tiempoMedio.toInt()/60} minutos"
+                txtTiempoMedio.text = "${tiempoMedio.toInt()/60} m"
 
                 val turnoActual = enEspera.firstOrNull()
                 if (turnoActual != null) {

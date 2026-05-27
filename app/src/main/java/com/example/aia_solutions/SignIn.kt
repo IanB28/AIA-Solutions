@@ -29,6 +29,9 @@ class SignIn : AppCompatActivity() {
     private lateinit var progressBar: ProgressBar
     private lateinit var backToLoginText: TextView
 
+    private lateinit var nameCompleteEditText: TextInputEditText
+    private lateinit var phoneNumberEditText: TextInputEditText
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_in)
@@ -45,6 +48,9 @@ class SignIn : AppCompatActivity() {
         signUpButton          = findViewById(R.id.btnSignUp)
         progressBar           = findViewById(R.id.progressBarSignIn)
         backToLoginText       = findViewById(R.id.tvBackToLogin)
+        nameCompleteEditText  = findViewById(R.id.nameComplete)
+        phoneNumberEditText   = findViewById(R.id.phoneNumberRegister)
+
 
         signUpButton.setOnClickListener {
             if (validateForm()) performSignUp()
@@ -58,10 +64,15 @@ class SignIn : AppCompatActivity() {
         val email           = emailEditText.text.toString().trim()
         val password        = passwordEditText.text.toString().trim()
         val confirmPassword = confirmPasswordEditText.text.toString().trim()
+        val nameComplete    = nameCompleteEditText.text.toString().trim()
+        val phoneNumber     = phoneNumberEditText.text.toString().trim()
+
 
         emailLayout.error           = null
         passwordLayout.error        = null
         confirmPasswordLayout.error = null
+        nameCompleteEditText.error  = null
+        phoneNumberEditText.error   = null
 
         if (email.isEmpty()) {
             emailLayout.error = "Ingresa tu correo"
@@ -86,6 +97,15 @@ class SignIn : AppCompatActivity() {
             confirmPasswordLayout.error = "Las contraseñas no coinciden"
             isValid = false
         }
+        if (nameComplete.isEmpty()) {
+            nameCompleteEditText.error = "Ingresa tu nombre completo"
+            isValid = false
+        }
+        if (phoneNumber.isEmpty()) {
+            phoneNumberEditText.error = "Ingresa tu número de teléfono"
+            isValid = false
+        }
+
 
         return isValid
     }
@@ -93,6 +113,11 @@ class SignIn : AppCompatActivity() {
     private fun performSignUp() {
         val email    = emailEditText.text.toString().trim()
         val password = passwordEditText.text.toString().trim()
+        val confirmPassword = confirmPasswordEditText.text.toString().trim()
+        val nameComplete    = nameCompleteEditText.text.toString().trim()
+        val phoneNumber     = phoneNumberEditText.text.toString().trim()
+
+
 
         progressBar.visibility  = View.VISIBLE
         signUpButton.isEnabled  = false
@@ -108,7 +133,9 @@ class SignIn : AppCompatActivity() {
                     // Guardar usuario en Firestore
                     val usuario = hashMapOf(
                         "email"     to email,
-                        "role"      to "admin",
+                        "role"      to "client",
+                        "name" to nameComplete,
+                        "phoneNumber" to phoneNumber,
                         "createdAt" to com.google.firebase.Timestamp.now()
                     )
 
