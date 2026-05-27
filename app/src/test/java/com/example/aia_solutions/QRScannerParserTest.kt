@@ -32,6 +32,13 @@ class QRScannerParserTest {
     }
 
     @Test
+    fun `extractBusinessId returns null for malformed business urls`() {
+        assertNull(extractBusinessId("aia://business/"))
+        assertNull(extractBusinessId("https://aia.app/business/"))
+        assertNull(extractBusinessId("https://aia.app/some/deep/path/business123"))
+    }
+
+    @Test
     fun `extractBusinessId keeps direct id value`() {
         assertEquals("business789", extractBusinessId("business789"))
     }

@@ -167,8 +167,11 @@ internal fun extractBusinessId(rawValue: String): String? {
 
     if (value.startsWith("http://") || value.startsWith("https://")) {
         val path = value.substringBefore('?').substringBefore('#')
-        val lastSegment = path.substringAfterLast('/', "")
-        if (lastSegment.isNotBlank()) return lastSegment
+        if ("/business/" in path) {
+            val businessId = path.substringAfter("/business/").substringBefore('/')
+            if (businessId.isNotBlank()) return businessId
+        }
+        return null
     }
 
     return value
