@@ -22,6 +22,16 @@ class QRScannerParserTest {
     }
 
     @Test
+    fun `extractBusinessId supports id query parameter`() {
+        assertEquals("business999", extractBusinessId("https://aia.app/join?id=business999"))
+    }
+
+    @Test
+    fun `extractBusinessId supports path-based url`() {
+        assertEquals("business123", extractBusinessId("https://aia.app/business/business123"))
+    }
+
+    @Test
     fun `extractBusinessId keeps direct id value`() {
         assertEquals("business789", extractBusinessId("business789"))
     }

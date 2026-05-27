@@ -16,18 +16,20 @@ import androidx.fragment.app.Fragment
 import data.firebase.firebase.FirestoreService
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
+import com.google.mlkit.vision.barcode.BarcodeScanner
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
+import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 class QRScannerFragment : Fragment(R.layout.fragment_qr_scanner) {
 
     private val firestoreService = FirestoreService()
-    private val cameraExecutor = Executors.newSingleThreadExecutor()
     private val scannerOptions = BarcodeScannerOptions.Builder()
         .setBarcodeFormats(Barcode.FORMAT_QR_CODE)
         .build()
-    private val scanner = BarcodeScanning.getClient(scannerOptions)
+    private var scanner: BarcodeScanner? = null
+    private var cameraExecutor: ExecutorService? = null
     private var hasScanned = false
     private var cameraProvider: ProcessCameraProvider? = null
 
@@ -43,6 +45,11 @@ class QRScannerFragment : Fragment(R.layout.fragment_qr_scanner) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if (cameraExecutor == null || cameraExecutor?.isShutdown == true) {
+            cameraExecutor = Executors.newSingleThreadExecutor()
+        }
+        scanner = scanner ?: BarcodeScanning.getClient(scannerOptions)
+
         if (hasCameraPermission()) {
             startCamera()
         } else {
@@ -71,7 +78,10 @@ class QRScannerFragment : Fragment(R.layout.fragment_qr_scanner) {
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build()
                 .also { analysis ->
-                    analysis.setAnalyzer(cameraExecutor) { imageProxy ->
+                    val executor = cameraExecutor ?: return
+                    val scannerClient = scanner ?: return
+
+                    analysis.setAnalyzer(executor) { imageProxy ->
                         val mediaImage = imageProxy.image
                         if (mediaImage == null || hasScanned) {
                             imageProxy.close()
@@ -80,7 +90,7 @@ class QRScannerFragment : Fragment(R.layout.fragment_qr_scanner) {
 
                         val image =
                             InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
-                        scanner.process(image)
+                        scannerClient.process(image)
                             .addOnSuccessListener { barcodes ->
                                 processBarcodes(barcodes)
                             }
@@ -134,8 +144,17 @@ class QRScannerFragment : Fragment(R.layout.fragment_qr_scanner) {
     override fun onDestroyView() {
         super.onDestroyView()
         cameraProvider?.unbindAll()
-        scanner.close()
-        cameraExecutor.shutdown()
+        cameraProvider = null
+        scanner?.close()
+        scanner = null
+        cameraExecutor?.shutdownNow()
+        cameraExecutor = null
+    }
+
+    override fun onDestroy() {
+        cameraExecutor?.shutdownNow()
+        scanner?.close()
+        super.onDestroy()
     }
 }
 
