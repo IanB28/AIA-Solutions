@@ -147,14 +147,8 @@ class QRScannerFragment : Fragment(R.layout.fragment_qr_scanner) {
         cameraProvider = null
         scanner?.close()
         scanner = null
-        cameraExecutor?.shutdownNow()
+        cameraExecutor?.shutdown()
         cameraExecutor = null
-    }
-
-    override fun onDestroy() {
-        cameraExecutor?.shutdownNow()
-        scanner?.close()
-        super.onDestroy()
     }
 }
 
