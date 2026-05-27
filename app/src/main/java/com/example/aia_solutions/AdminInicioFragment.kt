@@ -45,6 +45,7 @@ class AdminInicioFragment : Fragment(R.layout.fragment_admin_inicio) {
         val switchEstado            = view.findViewById<Switch>(R.id.switchEstado)
         val layoutTurnoActivo       = view.findViewById<LinearLayout>(R.id.layoutTurnoActivo)
         val layoutSinTurno          = view.findViewById<LinearLayout>(R.id.layoutSinTurno)
+        val txtTiempoMedio          = view.findViewById<TextView>(R.id.txtTiempoMedio)
 
         turnoAdapter = TurnoAdapter(emptyList())
         recyclerTurnos.layoutManager = LinearLayoutManager(requireContext())
@@ -82,7 +83,8 @@ class AdminInicioFragment : Fragment(R.layout.fragment_admin_inicio) {
                     txtEnEspera, txtAtendidos, txtTotalEspera, txtSinEspera,
                     txtNumeroTurnoActual, txtNombreTurnoActual,
                     txtInicialesTurnoActual, txtTiempoTurnoActual,
-                    layoutTurnoActivo, layoutSinTurno, recyclerTurnos
+                    layoutTurnoActivo, layoutSinTurno, recyclerTurnos,
+                    txtTiempoMedio
                 )
             }
             .addOnFailureListener {
@@ -111,7 +113,8 @@ class AdminInicioFragment : Fragment(R.layout.fragment_admin_inicio) {
         txtNumeroTurnoActual: TextView, txtNombreTurnoActual: TextView,
         txtInicialesTurnoActual: TextView, txtTiempoTurnoActual: TextView,
         layoutTurnoActivo: LinearLayout, layoutSinTurno: LinearLayout,
-        recyclerTurnos: RecyclerView
+        recyclerTurnos: RecyclerView,
+        txtTiempoMedio: TextView
     ) {
         db.collection("businesses").document(businessId)
             .collection("turns")
@@ -122,10 +125,12 @@ class AdminInicioFragment : Fragment(R.layout.fragment_admin_inicio) {
                 val todos     = snapshot.documents
                 val enEspera  = todos.filter { it.getString("status") == "waiting" }
                 val atendidos = todos.filter { it.getString("status") == "done" }
+                val tiempoMedio = todos.mapNotNull { it.getLong("waitSeconds") }.average()
 
                 txtEnEspera.text    = enEspera.size.toString()
                 txtAtendidos.text   = atendidos.size.toString()
                 txtTotalEspera.text = "${enEspera.size} turnos"
+                txtTiempoMedio.text = "${tiempoMedio.toInt()/60} minutos"
 
                 val turnoActual = enEspera.firstOrNull()
                 if (turnoActual != null) {
@@ -200,19 +205,39 @@ class AdminInicioFragment : Fragment(R.layout.fragment_admin_inicio) {
         sheetView.findViewById<TextView>(R.id.txtBottomIniciales).text = nombre.take(2).uppercase()
 
         sheetView.findViewById<TextView>(R.id.btnAtendido).setOnClickListener {
-            db.collection("businesses").document(businessId)
+            val endedAt = com.google.firebase.Timestamp.now()
+            val turnoDoc = db.collection("businesses").document(businessId)
                 .collection("turns").document(turnoId)
-                .update("status", "done")
-                .addOnSuccessListener { bottomSheet.dismiss() }
-                .addOnFailureListener {
-                    Toast.makeText(requireContext(), "Error al actualizar", Toast.LENGTH_SHORT).show()
-                }
+
+            turnoDoc.get().addOnSuccessListener { doc ->
+                val createdAt = doc.getTimestamp("createdAt")
+                val waitSeconds = if (createdAt != null) {
+                    endedAt.seconds - createdAt.seconds
+                } else 0L
+
+                turnoDoc.update(
+                    mapOf(
+                        "status"      to "done",
+                        "endedAt"     to endedAt,
+                        "waitSeconds" to waitSeconds
+                    )
+                )
+                    .addOnSuccessListener { bottomSheet.dismiss() }
+                    .addOnFailureListener {
+                        Toast.makeText(requireContext(), "Error al actualizar", Toast.LENGTH_SHORT).show()
+                    }
+            }
         }
 
         sheetView.findViewById<TextView>(R.id.btnCancelarTurno).setOnClickListener {
             db.collection("businesses").document(businessId)
                 .collection("turns").document(turnoId)
-                .update("status", "cancelled")
+                .update(
+                    mapOf(
+                        "status"    to "cancelled",
+                        "endedAt"   to com.google.firebase.Timestamp.now()
+                    )
+                )
                 .addOnSuccessListener { bottomSheet.dismiss() }
                 .addOnFailureListener {
                     Toast.makeText(requireContext(), "Error al cancelar", Toast.LENGTH_SHORT).show()
