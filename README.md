@@ -148,7 +148,7 @@ Aquí puedes ver las interfaces reales de la aplicación:
 </td>
 <td align="center">
 <img src="./assets/statsAdminView.png" width="250" alt="Panel de Control">
-<br/><b>Panel de Control</b><br/>Gestión de turnos en tiempo real
+<br/><b>Panel de Control Estadistico</b><br/>Gestión de turnos en tiempo real
 </td>
 <td align="center">
 <img src="./assets/businessAdminView.png" width="250" alt="Mi Negocio">
@@ -411,7 +411,9 @@ Este proyecto está bajo la licencia **MIT** - Ver archivo [LICENSE](LICENSE) pa
 
 ## 👨‍💻 Desarrolladores
 
-- **Alejandro García** - Lead Developer
+- **Alejandro Balderas** - Lead Developer
+- **Ian Buzzo** - Co-Lead Developer
+- **Alan Barrera** - Co-Lead Developer
 - Equipo de AIA Solutions
 
 ---
